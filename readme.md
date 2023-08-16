@@ -1,20 +1,9 @@
 # Markdown from Supernote
 
-- Downloads supernote-notes from google-drive, puts them in temp.
-- Generates SVGs for all the pages of such notes.
-- Generates markdown for all notes, pointing to the notes.
+- Downloads supernote-notes from Google Drive, puts them in temp.
+- Generates markdown and images for each note.
 
-## Run
-
-```
-python main.py
-```
-
-### Output
-
-A directory 'supenote', with one markdown files for the notes. All images in a `images` dir.
-
-Example output: 
+Example output:
 
 ```markdown
 ---
@@ -32,8 +21,6 @@ last_modified: 2023-07-25T23:44:57.496Z
 ## 2
 
 ![[1aOJdvWZ9sRyH_bSBeu8XECrf4rlFQ3de_1.svg]]
-
-
 ```
 
 ## Installation
@@ -46,4 +33,10 @@ pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-pyt
 
 ### APIs
 
-Configure Google-drive API, get a credentials.json file.
+Configure Google-drive API, and get a credentials.json file.
+
+## Run
+
+```
+python main.py
+```
