@@ -49,6 +49,7 @@ def get_google_drive_service():
     # Create a Drive service
     return build('drive', 'v3', credentials=creds)
 
+
 def produce_numbered_images(note_filename, images_output_dir, file_id):
     notebook = sn.load_notebook(note_filename, policy=POLICY)
     total_pages = notebook.get_total_pages()
@@ -103,10 +104,18 @@ def download_file(file_id, file_size, file_path, service):
         f.write(downloaded_file.read())
 
 
+def generate_index(index_file_name, notes):
+    with open(index_file_name, 'w') as index_file:
+        index_file.write("# Notes Index\n\n")
+        for note in notes:
+            index_file.write(f"## [{note['title']}]({note['markdown_file']})\n\n")
+
+
 def main():
     service = get_google_drive_service()
 
     query = "mimeType != 'application/vnd.google-apps.folder' and name contains '.note' and trashed = false"
+    note_details = []
 
     with tempfile.TemporaryDirectory() as temp_dir:
 
@@ -117,6 +126,7 @@ def main():
 
         # get the GDrive ID of the file
         page_token = None
+
         while True:
             response = service.files().list(q=query,
                                             spaces="drive",
@@ -130,13 +140,16 @@ def main():
                     file_id = file["id"]
                     file_size = int(file["size"])
 
-                    note_path = os.path.join(temp_dir, file_id)
-                    download_file(file_id, file_size, note_path, service)
-
-                    images = produce_numbered_images(note_path, images_output_dir, file_id)
-
                     markdown_file_name = os.path.join(output_dir, '{}.md'.format(file_id))
 
+                    note_details.append({
+                        "title": file_name,
+                        "markdown_file": markdown_file_name
+                    })
+
+                    note_path = os.path.join(temp_dir, file_id)
+                    download_file(file_id, file_size, note_path, service)
+                    images = produce_numbered_images(note_path, images_output_dir, file_id)
                     produce_markdown(markdown_file_name, images, file["modifiedTime"], get_size_format(file_size),
                                      file_name)
 
@@ -144,6 +157,8 @@ def main():
             if not page_token:
                 # no more files
                 break
+    index_file_name = os.path.join(output_dir, 'index.md')
+    generate_index(index_file_name, note_details)
 
 
 if __name__ == '__main__':

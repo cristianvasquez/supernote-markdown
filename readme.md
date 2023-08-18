@@ -1,9 +1,11 @@
 # Markdown from Supernote
 
-- Downloads supernote-notes from Google Drive, puts them in temp.
-- Generates markdown and images for each note.
+Python script that uses the Google Drive API to download all supernote '.note' files, and generate Markdown files with
+references to such images. 
 
-Example output:
+## Outputs
+
+### A note
 
 ```markdown
 ---
@@ -22,6 +24,8 @@ last_modified: 2023-07-25T23:44:57.496Z
 
 ![[1aOJdvWZ9sRyH_bSBeu8XECrf4rlFQ3de_1.svg]]
 ```
+
+### The index
 
 ## Installation
 
