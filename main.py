@@ -15,7 +15,6 @@ from tqdm import tqdm
 
 POLICY = 'strict'
 
-
 def get_size_format(b, factor=1024, suffix="B"):
     """
     Scale bytes to its proper byte format
@@ -110,7 +109,6 @@ def generate_index(index_file_name, notes):
         for note in notes:
             index_file.write(f"## [{note['title']}]({note['markdown_file']})\n\n")
 
-
 def main():
     service = get_google_drive_service()
 
@@ -121,8 +119,14 @@ def main():
 
         output_dir = 'supernote'
         images_output_dir = os.path.join(output_dir, 'images')
+
         if not os.path.exists(images_output_dir):
             os.makedirs(images_output_dir)
+
+        notes_output_dir = os.path.join(output_dir, 'notes')
+
+        if not os.path.exists(notes_output_dir):
+            os.makedirs(notes_output_dir)
 
         # get the GDrive ID of the file
         page_token = None
@@ -134,24 +138,28 @@ def main():
                                             pageToken=page_token).execute()
 
             for file in response.get("files", []):
-                file_name = file["name"]
+                note_file_name = file["name"]
 
-                if "size" in file and file_name.endswith(".note"):
+                if "size" in file and note_file_name.endswith(".note"):
                     file_id = file["id"]
                     file_size = int(file["size"])
 
-                    markdown_file_name = os.path.join(output_dir, '{}.md'.format(file_id))
+                    markdown_file_name = '{} {}.md'.format(note_file_name, file_id)
 
                     note_details.append({
-                        "title": file_name,
+                        "title": note_file_name,
                         "markdown_file": markdown_file_name
                     })
 
+                    # Download and produce the images
                     note_path = os.path.join(temp_dir, file_id)
                     download_file(file_id, file_size, note_path, service)
                     images = produce_numbered_images(note_path, images_output_dir, file_id)
+
+                    # Produce the markdown
+                    markdown_file_name = os.path.join(notes_output_dir, markdown_file_name)
                     produce_markdown(markdown_file_name, images, file["modifiedTime"], get_size_format(file_size),
-                                     file_name)
+                                     note_file_name)
 
             page_token = response.get('nextPageToken', None)
             if not page_token:
