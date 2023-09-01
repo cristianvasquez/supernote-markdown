@@ -82,8 +82,7 @@ def produce_markdown(file_name, images, modified, size, note_title):
 
         # Write image section for each file in file_names
         for i, image_file in enumerate(images, start=1):
-            markdown_file.write(f"## {i}\n")
-            markdown_file.write(f"\n![[{image_file}]]\n\n")
+            markdown_file.write(f"![[{image_file}|{note_title} page-{i}]] ")
 
 
 def download_file(file_id, file_size, file_path, service):
