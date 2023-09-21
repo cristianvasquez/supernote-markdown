@@ -1,7 +1,21 @@
 # Markdown from Supernote
 
 Python script that uses the Google Drive API to download all supernote '.note' files, and generate Markdown files with
-references to such images. 
+references to such images.
+
+## Notes to myself
+
+Populate the directory with all the markdown and one image per page.
+
+```sh
+python main.py
+``` 
+
+Sync the contents with the Obsidian vault
+
+```sh
+./sync.sh
+```
 
 ## Outputs
 
@@ -38,9 +52,3 @@ pip install google-auth google-auth-oauthlib google-auth-httplib2 google-api-pyt
 ### APIs
 
 Configure Google-drive API, and get a credentials.json file.
-
-## Run
-
-```
-python main.py
-```
