@@ -5,6 +5,7 @@ import os
 import os.path
 import os.path
 import tempfile
+import shutil
 
 import supernotelib as sn
 from google.oauth2.credentials import Credentials
@@ -14,6 +15,7 @@ from googleapiclient.http import MediaIoBaseDownload
 from tqdm import tqdm
 
 POLICY = 'strict'
+
 
 def get_size_format(b, factor=1024, suffix="B"):
     """
@@ -106,7 +108,8 @@ def generate_index(index_file_name, notes):
     with open(index_file_name, 'w') as index_file:
         index_file.write("# Notes Index\n\n")
         for note in notes:
-            index_file.write(f"## [{note['title']}]({note['markdown_file']})\n\n")
+            index_file.write(f"## [[{note['markdown_file']}|{note['title']}]]\n\n")
+
 
 def main():
     service = get_google_drive_service()
@@ -117,15 +120,24 @@ def main():
     with tempfile.TemporaryDirectory() as temp_dir:
 
         output_dir = 'supernote'
+
         images_output_dir = os.path.join(output_dir, 'images')
 
-        if not os.path.exists(images_output_dir):
-            os.makedirs(images_output_dir)
+        # Delete the 'images' directory if it exists
+        if os.path.exists(images_output_dir):
+            shutil.rmtree(images_output_dir)
+
+        # Create the 'images' directory again
+        os.makedirs(images_output_dir)
 
         notes_output_dir = os.path.join(output_dir, 'notes')
 
-        if not os.path.exists(notes_output_dir):
-            os.makedirs(notes_output_dir)
+        # Delete the 'notes' directory if it exists
+        if os.path.exists(notes_output_dir):
+            shutil.rmtree(notes_output_dir)
+
+        # Create the 'notes' directory again
+        os.makedirs(notes_output_dir)
 
         # get the GDrive ID of the file
         page_token = None
