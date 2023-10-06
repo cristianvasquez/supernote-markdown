@@ -35,16 +35,22 @@ SCOPES = ['https://www.googleapis.com/auth/drive.readonly']
 
 
 def get_google_drive_service():
+    # Get the directory where this script is located
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+
+    # Construct the paths relative to the script directory
+    token_path = os.path.join(script_dir, 'token.json')
+    credentials_path = os.path.join(script_dir, 'credentials.json')
+
     creds = None
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    if os.path.exists(token_path):
+        creds = Credentials.from_authorized_user_file(token_path, SCOPES)
 
     if not creds or not creds.valid:
         # Set up OAuth 2.0 credentials
-        flow = InstalledAppFlow.from_client_secrets_file(
-            'credentials.json', SCOPES)
+        flow = InstalledAppFlow.from_client_secrets_file(credentials_path, SCOPES)
         creds = flow.run_local_server(port=0)
-        with open('token.json', 'w') as token:
+        with open(token_path, 'w') as token:
             token.write(creds.to_json())
 
     # Create a Drive service
