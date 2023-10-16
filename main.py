@@ -13,6 +13,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from tqdm import tqdm
+import argparse
 
 POLICY = 'strict'
 
@@ -117,7 +118,7 @@ def generate_index(index_file_name, notes):
             index_file.write(f"## [[{note['markdown_file']}|{note['title']}]]\n\n")
 
 
-def main():
+def main(target_directory):
     service = get_google_drive_service()
 
     query = "mimeType != 'application/vnd.google-apps.folder' and name contains '.note' and trashed = false"
@@ -125,9 +126,7 @@ def main():
 
     with tempfile.TemporaryDirectory() as temp_dir:
 
-        output_dir = 'supernote'
-
-        images_output_dir = os.path.join(output_dir, 'images')
+        images_output_dir = os.path.join(target_directory, 'images')
 
         # Delete the 'images' directory if it exists
         if os.path.exists(images_output_dir):
@@ -136,7 +135,7 @@ def main():
         # Create the 'images' directory again
         os.makedirs(images_output_dir)
 
-        notes_output_dir = os.path.join(output_dir, 'notes')
+        notes_output_dir = os.path.join(target_directory, 'notes')
 
         # Delete the 'notes' directory if it exists
         if os.path.exists(notes_output_dir):
@@ -182,9 +181,16 @@ def main():
             if not page_token:
                 # no more files
                 break
-    index_file_name = os.path.join(output_dir, 'index.md')
+    index_file_name = os.path.join(target_directory, 'index.md')
     generate_index(index_file_name, note_details)
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Process Google Drive notes and produce numbered images.')
+    parser.add_argument('target_directory', help='Target directory for download')
+    return parser.parse_args()
 
 if __name__ == '__main__':
+    args = parse_arguments()
+    print('ARGS',args)
+    main(args.target_directory)
     main()
