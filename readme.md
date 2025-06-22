@@ -1,4 +1,4 @@
-# Supernote to Markdown Converter
+# Supernote Sync
 
 Python script that downloads Supernote `.note` files from Google Drive and converts them to Markdown files with SVG images for each page.
 
@@ -23,7 +23,7 @@ This project uses [uv](https://docs.astral.sh/uv/) for dependency management.
 2. Clone the repository and install dependencies:
    ```bash
    git clone <your-repo-url>
-   cd supernote-markdown
+   cd supernote-sync
    uv sync
    ```
 

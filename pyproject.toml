@@ -1,5 +1,5 @@
 [project]
-name = "supernote-markdown"
+name = "supernote-sync"
 version = "0.1.0"
 description = "Python script that uses the Google Drive API to download all supernote '.note' files, and generate Markdown files with references to such images."
 readme = "readme.md"
