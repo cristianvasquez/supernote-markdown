@@ -994,7 +994,7 @@ wheels = [
 ]
 
 [[package]]
-name = "supernote-markdown"
+name = "supernote-sync"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
