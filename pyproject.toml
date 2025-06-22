@@ -1,0 +1,17 @@
+[project]
+name = "supernote-markdown"
+version = "0.1.0"
+description = "Python script that uses the Google Drive API to download all supernote '.note' files, and generate Markdown files with references to such images."
+readme = "readme.md"
+requires-python = ">=3.8"
+dependencies = [
+    "google-auth",
+    "google-auth-oauthlib", 
+    "google-auth-httplib2",
+    "google-api-python-client",
+    "supernotelib",
+    "tqdm",
+]
+
+[tool.uv]
+dev-dependencies = []
