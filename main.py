@@ -125,21 +125,36 @@ def download_file(file_id, file_size, file_path, service):
         f.write(downloaded_file.read())
 
 
-def extract_images(note_file_path, images_output_dir, file_id):
-    """Extract images from a note file to SVG files"""
+def extract_images(note_file_path, images_output_dir, file_id=None, format='svg'):
+    """Extract images from a note file to SVG or PNG files"""
     notebook = sn.load_notebook(note_file_path, policy=POLICY)
     total_pages = notebook.get_total_pages()
-    palette = None
-    converter = sn.converter.SvgConverter(notebook, palette=palette)
     max_digits = len(str(total_pages))
+    
+    if format.lower() == 'png':
+        converter = sn.converter.ImageConverter(notebook)
+        extension = 'png'
+    else:
+        palette = None
+        converter = sn.converter.SvgConverter(notebook, palette=palette)
+        extension = 'svg'
 
     for i in tqdm(range(total_pages), desc=f"Extracting images from {os.path.basename(note_file_path)}"):
-        numbered_filename = f"{file_id}_{str(i).zfill(max_digits)}.svg"
+        if file_id:
+            # For Google Drive sync - use file_id prefix
+            numbered_filename = f"{file_id}_{str(i).zfill(max_digits)}.{extension}"
+        else:
+            # For single file processing - use page numbers
+            numbered_filename = f"page_{str(i+1).zfill(max_digits)}.{extension}"
+        
         numbered_filename_path = os.path.join(images_output_dir, numbered_filename)
         img = converter.convert(i)
 
-        with open(numbered_filename_path, 'w') as f:
-            f.write(img)
+        if extension == 'svg':
+            with open(numbered_filename_path, 'w') as f:
+                f.write(img)
+        else:
+            img.save(numbered_filename_path)
 
 
 def move_to_deleted(file_path, target_directory):
@@ -251,7 +266,7 @@ def process_note_file(file, sync_state, current_files, temp_dir, notes_output_di
             os.makedirs(image_folder, exist_ok=True)
         else:
             image_folder = images_output_dir
-        extract_images(note_temp_path, image_folder, file_id)
+        extract_images(note_temp_path, image_folder, file_id, 'svg')
     
     # Update sync state
     sync_state[file_id] = {
@@ -330,20 +345,49 @@ def sync_notes(target_directory, extract_images_flag=False):
             print(f"  Images extracted: No (use --extract-images to enable)")
 
 
+def process_single_file(note_file_path, output_dir, format='svg'):
+    """Process a single .note file and extract images"""
+    if not os.path.exists(note_file_path):
+        print(f"Error: Note file not found: {note_file_path}")
+        return 1
+    
+    os.makedirs(output_dir, exist_ok=True)
+    
+    print(f"Processing: {note_file_path}")
+    print(f"Output directory: {output_dir}")
+    print(f"Format: {format.upper()}")
+    
+    extract_images(note_file_path, output_dir, None, format)
+    
+    print(f"\nExtraction completed! Images saved to: {output_dir}")
+    return 0
+
+
 def parse_arguments():
     """Parse command line arguments"""
-    parser = argparse.ArgumentParser(description='Sync Supernote files from Google Drive')
-    parser.add_argument('target_directory', help='Target directory for download')
+    parser = argparse.ArgumentParser(description='Sync Supernote files from Google Drive or process single files')
+    parser.add_argument('target_directory', help='Target directory for sync or single file output')
     parser.add_argument('--extract-images', action='store_true', 
-                       help='Extract images from note files to SVG format')
+                       help='Extract images from note files to SVG format (sync mode)')
+    parser.add_argument('--single-file', metavar='NOTE_FILE',
+                       help='Process a single .note file instead of syncing from Google Drive')
+    parser.add_argument('--format', choices=['svg', 'png'], default='svg',
+                       help='Image format for extraction (default: svg)')
     return parser.parse_args()
 
 
 def main():
     """Main entry point"""
     args = parse_arguments()
-    sync_notes(args.target_directory, args.extract_images)
+    
+    if args.single_file:
+        # Single file processing mode
+        return process_single_file(args.single_file, args.target_directory, args.format)
+    else:
+        # Google Drive sync mode
+        sync_notes(args.target_directory, args.extract_images)
+        return 0
 
 
 if __name__ == '__main__':
-    main()
+    exit(main())
