@@ -2,15 +2,11 @@
 
 # Get the directory where this script is located
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-DOWNLOAD_DIR="$SCRIPT_DIR/supernote"
+# DOWNLOAD_DIR="$SCRIPT_DIR/supernote"
+DOWNLOAD_DIR=/home/cvasquez/supernote-notes
 
-# Check if --extract-images flag is passed
-if [[ "$1" == "--extract-images" ]]; then
-    echo "Running sync with image extraction enabled..."
-    uv run python "$SCRIPT_DIR/main.py" "$DOWNLOAD_DIR" --extract-images
-else
-    echo "Running sync (notes only). Use --extract-images to enable image extraction."
-    uv run python "$SCRIPT_DIR/main.py" "$DOWNLOAD_DIR"
-fi
+# Run Google Drive sync (notes only - with automatic cleanup of changed files)
+echo "Syncing notes from Google Drive..."
+uv run python "$SCRIPT_DIR/main.py" "$DOWNLOAD_DIR"
 
 echo "DONE"

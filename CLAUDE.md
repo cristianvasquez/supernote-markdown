@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Supernote MCP is a Python-based tool that processes Supernote `.note` files in two modes: syncing from Google Drive with intelligent incremental updates, or processing individual files locally. It extracts images in SVG or PNG format with folder structure preservation.
+Supernote Sync (supernote-sync) is a Python-based tool that processes Supernote `.note` files in two modes: syncing from Google Drive with intelligent incremental updates, or processing individual files locally. It extracts images in SVG or PNG format with folder structure preservation.
 
 ## Development Commands
 
@@ -28,6 +28,8 @@ uv run python main.py ./supernote
 # or  
 uv run python main.py ./supernote --extract-images
 ```
+
+**Note**: The `sync-notes.sh` script currently uses a hardcoded path `/home/cvasquez/supernote-notes` instead of the documented `./supernote` path.
 
 #### Single File Processing Mode
 ```bash
@@ -104,3 +106,11 @@ Required for Google Drive sync mode:
 ## Development Workflow
 
 The application now has a single entry point (`main.py`) with two distinct modes. When modifying sync logic, test with small subsets first. For single-file processing, test with various .note files to ensure format compatibility.
+
+### Exploration Scripts
+
+Several standalone exploration scripts are available in the root directory for analyzing Supernote collections:
+- `advanced_note_explorer.py` - Advanced note structure analysis
+- `analyze_collection.py` - Collection-wide analysis
+- `explore_note_structure.py` - Basic note structure exploration
+- `extract_all_structure.py` - Extract complete structure data
