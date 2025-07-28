@@ -1,9 +1,0 @@
-.markdown-source-view audio,
-.markdown-source-view video {
-  max-height: 300px;
-}
-
-.markdown-source-view img:not([width]) {
-  max-height: 600px;
-
-}

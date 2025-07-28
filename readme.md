@@ -1,3 +1,0 @@
-# Supernote MCP
-
-WIP

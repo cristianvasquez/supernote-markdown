@@ -1,0 +1,20 @@
+{
+  "name": "supernote-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Supernote operations (split, merge, extract)",
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": ["mcp", "supernote", "notes", "split", "merge"],
+  "author": "cvasquez",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0"
+  },
+  "bin": {
+    "supernote-mcp-server": "./src/server.js"
+  }
+}
